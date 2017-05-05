@@ -5,6 +5,7 @@ import os
 o = optparse.OptionParser()
 o.add_option('--omnipath',dest='omnipath',default='%s.npz',type='string',
             help='Format string (e.g. "path/%s.npz", where you actually type the "%s") which converts the input file name to the omnical npz path/file.')
+o.add_option('--multipol',action='store_true',help='Toggle true if omnifile came from a multiple polarization calibration')
 opts,args = o.parse_args(sys.argv[1:])
 
 #File Dictionary 
@@ -14,7 +15,13 @@ for f,filename in enumerate(args):
     if os.path.exists(newfile): 
         print newfile, 'exists, skipping...'
         continue
-    omnifile = opts.omnipath % '.'.join(filename.split('/')[-1].split('.')[0:4])
+    sp = filename.split('/')[-1].split('.')
+    if not opts.multipol:
+        L=4
+        omnifile = opts.omnipath % '.'.join(sp[0:L])
+    else:
+        L=3
+        omnifile = opts.omnipath % '.'.join(sp[0:L]+['npz'])
     print '    Omnical npz:', omnifile
     flags = np.load(omnifile) 
     times = []
