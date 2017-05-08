@@ -14,7 +14,11 @@ opts,args = o.parse_args(sys.argv[1:])
 
 for f,filename in enumerate(args):
     print '    Omnical npz:', filename
-    m,_,_,_ = capo.omni.from_npz(filename)
+    try:
+        m,_,_,_ = capo.omni.from_npz(filename)
+    except IOError:
+        print 'Error reading %s'%filename
+        continue
     chi_flag=capo.xrfi.omni_chisq_to_flags(m['chisq'], K=opts.boxside, sigma=opts.sig, sigl=opts.sigl)
     flags = dict(zip(map(str,m['jds']),chi_flag))
     newname = '.'.join(filename.split('.')[:4]) + '.chisqflag.npz'

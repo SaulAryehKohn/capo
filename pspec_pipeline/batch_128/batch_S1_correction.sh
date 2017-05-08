@@ -1,7 +1,7 @@
 #$ -S /bin/bash
 #$ -V
 #$ -cwd
-#$ -l h_vmem=5G
+#$ -l h_vmem=20G
 #$ -j y
 #$ -N correct128
 #$ -o grid_output

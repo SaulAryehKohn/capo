@@ -23,7 +23,10 @@ for f,filename in enumerate(args):
         L=3
         omnifile = opts.omnipath % '.'.join(sp[0:L]+['npz'])
     print '    Omnical npz:', omnifile
-    flags = np.load(omnifile) 
+    try:
+        flags = np.load(omnifile) 
+    except IOError:
+        print 'Error opening %s'%omnifile
     times = []
 
     def mfunc(uv,p,d,f):
@@ -38,11 +41,4 @@ for f,filename in enumerate(args):
     uvo.init_from_uv(uvi)
     print '    Saving', newfile
     uvo.pipe(uvi, mfunc=mfunc, raw=True, append2hist='OMNI_XRFI: ' + ' '.join(sys.argv) + '\n')
-    
-    
-            
-    
-    
-        
-    
-     
+
