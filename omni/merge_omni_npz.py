@@ -11,6 +11,7 @@ Returns
 """
 o = optparse.OptionParser()
 o.set_usage('merge_omni_npz.py [options] /path/to/*xx.npz')
+o.add_option('--fixKey',action='store_true',help='Relabel keys in the yy dict from "x" to "y"')
 opts,args = o.parse_args(sys.argv[1:])
 
 def merge_dicts(*dict_args):
@@ -25,6 +26,13 @@ for xx_npz in args:
     print "Reading %s %s"%(xx_npz,yy_npz)    
     metax,gainsx,vismdlx,xtalkx = omni.from_npz(xx_npz)
     metay,gainsy,vismdly,xtalky = omni.from_npz(yy_npz)    
+    if opts.fixKey:
+        for k in metay.keys():
+            if k.endswith('x'):
+                knew = k[:-1]+'y'
+        gainsy['y'] = gainsy.pop('x')
+        vismdly['yy'] = vismdly.pop('xx')
+        xtalky['xx'] = xtalky.pop('xx')    
     meta = merge_dicts(metax,metay)
     gains = merge_dicts(gainsx,gainsy)
     vismdl = merge_dicts(vismdlx,vismdly)

@@ -12,7 +12,7 @@ source activate PAPER
 ARGS=`pull_args.py $*`
 CALFILE='psa6622_v003'
 PATH2CAPO=/home/saulkohn/ReposForCanopy/capo/
-OMNIPATH=/data4/paper/2013EoR/Analysis/ProcessedData/epoch2/omni_v5_xtalk_4pol/
+OMNIPATH=/data4/paper/2013EoR/Analysis/ProcessedData/epoch1/omni_v5_xtalk_4pol/
 CHANFLAGS="101,102,148,149,150,151,152,153,154,169"
 for f in ${ARGS}; do
     fpath=`cut -d "z" -f 1 <<< "$f"`

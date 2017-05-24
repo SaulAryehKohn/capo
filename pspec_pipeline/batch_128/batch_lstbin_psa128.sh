@@ -11,7 +11,7 @@ source activate PAPER
 LSTS=`python -c "import numpy as n; hr = 1.0; print ' '.join(['%f_%f' % (d,d+hr/4.) for d in n.arange(0,23.999*hr,hr/4.)])"` # 96 lst bins from 0-24hr
 MY_LSTS=`pull_args.py $LSTS`
 CALFILE=psa6622_v003
-PREFIX=lstbin_May08_I_fg
+PREFIX=lstbin_May08_Q_fg
 PATH2CAPO=/home/saulkohn/ReposForCanopy/capo
 
 echo $MY_LSTS
