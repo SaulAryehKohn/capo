@@ -4,7 +4,7 @@
 #$ -o grid_output
 #$ -e grid_output
 #$ -l h_vmem=10G
-#$ -N CALIB_128_4POL
+#$ -N ABSCAL_128_4POL
 
 source activate HERA
 # hand this script a SINGLE POL of files and it will get the others
@@ -42,25 +42,27 @@ for f in ${ARGS}; do
         abscal_x=${abscal_xx_e2}
         calpath=${CALPATH}/epoch2/omni_v6_4pol/
     fi
-    
+   
+    # xx 
     echo python ${PATH2CAPO}/sak/scripts/create_abscal_calfits.py -p xx --miriad=${fxx} --abscal_list=${abscal_x} --cal_scheme='divide' --calpath=${calpath}
     python ${PATH2CAPO}/sak/scripts/create_abscal_calfits.py -p xx --miriad=${fxx} --abscal_list=${abscal_x} --cal_scheme='divide' --calpath=${calpath}
     omnipath=${calpath}${fQxx}.calfits
     echo ${PATH2HERACAL}/scripts/omni_apply.py -p xx --omnipath=${omnipath} --extension="K" --outpath=${calpath} ${fxx}
     ${PATH2HERACAL}/scripts/omni_apply.py -p xx --omnipath=${omnipath} --extension="K" --outpath=${calpath} ${fxx}    
-
+    # yy
     echo python ${PATH2CAPO}/sak/scripts/create_abscal_calfits.py -p yy --miriad=${fyy} --abscal_list=${abscal_y} --cal_scheme='divide' --calpath=${calpath}
     python ${PATH2CAPO}/sak/scripts/create_abscal_calfits.py -p yy --miriad=${fyy} --abscal_list=${abscal_y} --cal_scheme='divide' --calpath=${calpath}
     omnipath=${calpath}${fQyy}.calfits
     echo ${PATH2HERACAL}/scripts/omni_apply.py -p yy --omnipath=${omnipath} --extension="K" --outpath=${calpath} ${fyy}
     ${PATH2HERACAL}/scripts/omni_apply.py -p yy --omnipath=${omnipath} --extension="K" --outpath=${calpath} ${fyy}
     
+    # xy
     echo python ${PATH2CAPO}/sak/scripts/create_abscal_calfits.py -p xy --miriad=${fxy} --abscal_list=${abscal_x},${abscal_y} --cal_scheme='divide' --calpath=${calpath}
     python ${PATH2CAPO}/sak/scripts/create_abscal_calfits.py -p xy --miriad=${fxy} --abscal_list=${abscal_x},${abscal_y} --cal_scheme='divide' --calpath=${calpath}
     omnipath=${calpath}${fQxy}.calfits
     echo ${PATH2HERACAL}/scripts/omni_apply.py -p xy --omnipath=${omnipath} --extension="K" --outpath=${calpath} ${fxy}
     ${PATH2HERACAL}/scripts/omni_apply.py -p xy --omnipath=${omnipath} --extension="K" --outpath=${calpath} ${fxy}    
-
+    # yx
     echo python ${PATH2CAPO}/sak/scripts/create_abscal_calfits.py -p yx --miriad=${fyx} --abscal_list=${abscal_x},${abscal_y} --cal_scheme='divide' --calpath=${calpath}
     python ${PATH2CAPO}/sak/scripts/create_abscal_calfits.py -p yx --miriad=${fyx} --abscal_list=${abscal_x},${abscal_y} --cal_scheme='divide' --calpath=${calpath}
     omnipath=${calpath}${fQyx}.calfits

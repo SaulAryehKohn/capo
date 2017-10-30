@@ -22,6 +22,6 @@ abscal_list = opts.abscal_list.split(',')
 assert len(set(opts.pol)) == len(abscal_list)
 
 ac = AbsCal(opts.miriad_file, abscal_list, opts.pol, opts.cal_scheme, append2hist=' '.join(sys.argv))
-outname=opts.calpath+'/'+opts.miriad_file+'.calfits'
+outname=opts.calpath+'/'+os.path.basename(opts.miriad_file)+'.calfits'
 print('   Writing %s...'%outname)
 ac.write_calfits(outname) #XXX NB not clobbering
