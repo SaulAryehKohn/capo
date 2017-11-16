@@ -6,7 +6,7 @@
 echo "Welcome to the power spectrum pipeline!"
 
 #PSA64
-if true
+if false
 then
 echo "Danny and Matt PSA64!"
 CALFILE='psa6240_v003'
@@ -61,11 +61,11 @@ else
 echo "CARINA PSA64!"
 ### PSA64 Options ###
 POL='I'
-weight='I' #'L^-1'
+weight='I' #'I' #'L^-1'
 WINDOW='none'
 FRF='--frf'
 LMODE='' #'--lmode=12'
-CHANGEC='' #'--changeC'
+CHANGEC='--changeC'
 NBOOT=20 # use 1 if doing version 4 (pspec_banana)
 NGPS=5
 NGPS_LST=2 # only matters for version 4 (otherwise it's not used)
@@ -88,27 +88,28 @@ fi
 mkdir ${DIRNAME}
 echo Making Directory ${DIRNAME}
 
-for chan in ${CHAN}; do
-    if [ $(wc -w <<< ${CHAN}) -gt 1 ]; then
-        mkdir -p ${DIRNAME}/$chan
-        out_dir=${chan}/inject_sep${SEP}
-    else
-        out_dir=chan_${chan}_inject_sep${SEP}
-    fi
-    
+for mode_num in `python -c "import numpy; print ' '.join(map(str,numpy.arange(0,22,1)))"` ; do
+    mkdir -p ${DIRNAME}/project_${mode_num}_modes
+    out_dir=project_${mode_num}_modes/inject_sep${SEP}
+    echo MODE_NUM=${mode_num}
+ 
     # Stage 1: pspec_oqe_2d.py over range of injection levels
-    for inject in `python -c "import numpy; print ' '.join(map(str, numpy.logspace(-2,3,1)))"` ; do
-        out_dir=${out_dir}_${inject}
-        mkdir -p ${DIRNAME}/${out_dir}
+    for inject in `python -c "import numpy; print ' '.join(map(str, numpy.logspace(-3,3,20))) + ' ' + ' '.join(map(str, -numpy.logspace(-3,3,20)))"` ; do
+        out_dir_pspec=${out_dir}_${inject}
+        mkdir -p ${DIRNAME}/${out_dir_pspec}
         echo SIGNAL_LEVEL=${inject}
     
-        ~/src/capo/pspec_pipeline/pspec_oqe_2d.py ${LMODE} ${CHANGEC} --window=${WINDOW} -a cross -p ${POL} -c ${chan} \
-        -C ${CALFILE} -i ${inject} --weight=${weight} ${FRF} --output ${DIRNAME}/${out_dir} -b ${NBOOT} \
-        ${EVEN_FILES} ${ODD_FILES} --NGPS=${NGPS} --rmbls=${RMBLS}
+        ~/capo/pspec_pipeline/pspec_oqe_2d.py ${LMODE} ${CHANGEC} --window=${WINDOW} -a cross -p ${POL} -c ${CHAN} -C ${CALFILE} -i ${inject} --weight=${weight} ${FRF} --output ${DIRNAME}/${out_dir_pspec} -b ${NBOOT} --NGPS=${NGPS} --rmbls=${RMBLS} --mode_num=${mode_num} ${EVEN_FILES} ${ODD_FILES}
     
         # Stage 2: pspec_2d_to_1d.py
-        ~/src/capo/pspec_pipeline/pspec_2d_to_1d.py \
-        --output=${DIRNAME}/${out_dir}/ --NGPS_LST=${NGPS_LST} -v ${VERSION} ${DIRNAME}/${out_dir}/*bootsigloss*.npz
-        
+        ~/capo/pspec_pipeline/pspec_2d_to_1d.py \
+        --output=${DIRNAME}/${out_dir_pspec}/ --NGPS_LST=${NGPS_LST} -v ${VERSION} ${DIRNAME}/${out_dir_pspec}/*bootsigloss*.npz
+       
     done
+        
+    # Stage 3: pspec_final_sigloss_dist_v2.py
+    cd ${DIRNAME}/project_${mode_num}_modes
+    ~/capo/pspec_pipeline/pspec_final_sigloss_dist_v2.py --sep=${SEP}
+    cd ../..
+
 done

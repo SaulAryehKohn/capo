@@ -172,7 +172,7 @@ for filename in args.files:
         else: #new capo.sensitivity
             from capo import sensitivity
             S = sensitivity.Sense()
-            f = freq
+            f = pspec_dict['freq']
             S.z = capo.pspec.f2z(f)
 
             #   Tsys
@@ -184,7 +184,9 @@ for filename in args.files:
             S.t_int = inttime
             S.Ndays = cnt  #effective number of days
             S.Npols = 2
-            S.Nseps = 1
+            try: S.Nseps = pspec_dict['nseps']
+            except: S.Nseps = 1
+            print "Nseps = ",S.Nseps
             S.Nblgroups = pspec_dict['ngps'] 
             S.Omega_eff = omega_eff #use the FRF weighted beams listed in T1 of Parsons etal beam sculpting paper
             k = pspec_dict['k']
@@ -202,7 +204,7 @@ for filename in args.files:
     marker = markers[marker_count[gs_ind]]
     marker_count[gs_ind] += 1
 
-    try: # find from signal loss results
+    try: # find from old signal loss results 
         pCv = pspec_dict['pC']
         pIv = pspec_dict['pI']
         pCn = pspec_dict['pCn']
@@ -220,7 +222,7 @@ for filename in args.files:
         pCn_fold_up = pspec_dict['pCn_fold_up']
         pIn_fold_up = pspec_dict['pIn_fold_up']
         prob = pspec_dict['prob']*100
-    except: # find from pspec_2d_to_1d results
+    except: # find from pspec_2d_to_1d results or pspec_final_sigloss_v3.py results
         fold_factor = pspec_dict['k']**3/(2*np.pi**2)
         pCv = pspec_dict['pCv']
         pIv = pspec_dict['pIv']
@@ -452,6 +454,13 @@ ymax_d2 = np.power(10., max_val_d2)
 
 max_val_pk = np.ceil(np.log10(max_pk)) +1
 ymax_pk = np.power(10., max_val_pk)
+
+if ymax_d2 > ymax_pk: # use highest ymax for both delta^2 and p(k) plots, so that they're both the same
+    ymax_pk = ymax_d2.copy()
+    max_val_pk = max_val_d2.copy()
+if ymax_pk > ymax_d2:
+    ymax_d2 = ymax_pk.copy()
+    max_val_d2 = max_val_pk.copy()
 
 ax1[0].set_ylim([1e-1, ymax_d2])
 ax1[0].set_xlim([0.0, 0.6])
