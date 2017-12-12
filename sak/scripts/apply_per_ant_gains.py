@@ -11,7 +11,7 @@ o.add_option('--ycal',dest='ycal',default=None,help='path to Y gain npz')
 o.add_option('--verbose',dest='verbose',default=False,action='store_true',help='Toggle verbosity')
 
 opts,args = o.parse_args(sys.argv[1:])
-
+opts.nants = int(opts.nants)
 # check inputs
 assert opts.pol
 if opts.pol=='xx':
