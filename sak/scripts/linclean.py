@@ -10,7 +10,6 @@ from astropy import constants as c
 import aipy, optparse
 
 o = optparse.OptionParser()
-o.add_option('--bl_length',default=30,help='Baseline length *in meters*')
 o.add_option('--horizon',default=15,help='supra-horizon allowance *in nanoseconds*')
 o.add_option('--model',action='store_true',help='return model instead of residual')
 opts,args = o.parse_args(sys.argv[1:])
@@ -58,21 +57,11 @@ def linCLEAN(vis, flag_idx, tau_max, A=None, A_all=None, return_As=False):
         return resid, model, A, A_all
     return resid, model
 
-global curtime
-curtime=0.
-
-b_len = opts.bl_length*u.m
-tau_max = ((b_len/c.c).to(u.ns) + opts.horizon*u.ns).value
-
 ### there must be a better way than two different functions
 def mfunc_resid(uv,p,d,f):
     uvw,t,(i,j) = p
-    """
-    TODO: don't regenerate A all the time
-    if not t == curtime:
-        curtime = t
-        rtn = True
-    """
+    bl_len = np.sqrt(p[0][0]**2 + p[0][1]**2)*u.m
+    tau_max = ((b_len/c.c).to(u.ns) + float(opts.horizon)*u.ns).value
     vis = d
     flag_idx = np.where(f)[0]
     resid,_ = linCLEAN(vis,flag_idx,tau_max)
@@ -80,12 +69,8 @@ def mfunc_resid(uv,p,d,f):
 
 def mfunc_model(uv,p,d,f):
     uvw,t,(i,j) = p
-    """
-    TODO: don't regenerate A all the time
-    if not t == curtime:
-        curtime = t
-        rtn = True
-    """
+    bl_len = np.sqrt(p[0][0]**2 + p[0][1]**2)*u.m
+    tau_max = ((b_len/c.c).to(u.ns) + float(opts.horizon)*u.ns).value
     vis = d
     flag_idx = np.where(f)[0]
     _,model = linCLEAN(vis,flag_idx,tau_max)
