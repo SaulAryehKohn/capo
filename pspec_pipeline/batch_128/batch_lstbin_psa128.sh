@@ -3,17 +3,16 @@
 #$ -cwd
 #$ -o grid_output
 #$ -j y
-#$ -l h_vmem=18G
-#$ -N LSTBIN
-export PATH=/home/saulkohn/src/anaconda/bin:$PATH
-source activate PAPER
+#$ -l h_vmem=12G
+#$ -N LSTBIN128
+source activate HERA
 LSTS=`python -c "import numpy as n; hr = 1.0; print ' '.join(['%f_%f' % (d,d+hr/4.) for d in n.arange(0,23.999*hr,hr/4.)])"`
 #LSTS=`python -c "import numpy as n; hr = 1.0; print ' '.join(['%f_%f' % (d,d+hr/4.) for d in n.arange(6,9*hr,hr/4.)])"`
 #LSTS=`python -c "import numpy as n; hr = 1.0; print ' '.join(['%f_%f' % (d,d+hr/4.) for d in n.arange(5.25,9.5*hr,hr/4.)])"`
 #LSTS=9.250000_9.500000
 MY_LSTS=`pull_args.py $LSTS`
 CALFILE=psa6622_v002
-PREFIX=lstbin_Apr12_V_fgsub
+PREFIX=lstbin_Dec14_xx_fgsub
 PATH2CAPO=/home/saulkohn/ReposForCanopy/capo
 echo $MY_LSTS
 echo mkdir ${PREFIX}
@@ -34,7 +33,7 @@ for LST in $MY_LSTS; do
     mkdir odd
     cd odd
     echo ${PATH2CAPO}/scripts/lstbin_v02.py -a cross -C ${CALFILE} --lst_res=42.95 --lst_rng=$LST \
-    --tfile=600 --altmax=0 --stats=all --median --nsig=3 `python ~/scripts/select_file_parity.py $*`
+    --tfile=600 --altmax=0 --stats=all --median --nsig=3 `python ${PATH2CAPO}/scripts/select_file_parity.py --odd $*`
     python ${PATH2CAPO}/scripts/lstbin_v02.py -a cross -C ${CALFILE} --lst_res=42.95 --lst_rng=$LST \
     --tfile=600 --altmax=0 --stats=all --median --nsig=3 `python ${PATH2CAPO}/scripts/select_file_parity.py --odd $*`
     cd ..
