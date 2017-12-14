@@ -15,7 +15,6 @@ odd_lsts='lst*243.[3456]*'
 appelation='.uvGAL'
 inject_range='numpy.logspace(-2,3,10)'
 
-
 noise=''
 boot=60
 t_eff=69
@@ -103,4 +102,3 @@ for chan in $chans; do
         done
     done
 done
-

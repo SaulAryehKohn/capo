@@ -44,7 +44,7 @@ opts,args = o.parse_args(sys.argv[1:])
 
 #Basic parameters
 n.random.seed(0)
-POL = opts.pol 
+POL = opts.pol
 LST_STATS = False
 DELAY = False
 NGPS = 5  # number of groups to break the random sampled bls into
@@ -64,8 +64,9 @@ except:
     rmbls = []
 
 
-def frf(shape): #FRF NOISE
-    shape = shape[1]*2,shape[0] #(2*times,freqs)
+def frf(shape, loc=0, scale=1):  # FRF NOISE
+    """Create Fringe Rate Filtered Noise Sim."""
+    shape = shape[1]*2, shape[0]  # (2*times,freqs)
     dij = oqe.noise(size=shape)
     wij = n.ones(shape, dtype=bool)  # XXX flags are all true (times,freqs)
     # dij and wij are (times,freqs)
