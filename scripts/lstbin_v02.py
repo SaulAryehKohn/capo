@@ -201,7 +201,7 @@ for lst in lsts:
     t = jd_start + (lst - lst_start) * djd_dlst
     print 'LST:', a.ephem.hours(lst), '(%f)' % lst, ' -> JD:', t
     sys.stdout.flush()
-    uvo['lst'], uvo['ra'], uvo['obsra'] = lst, lst, lst
+    uvo['lst'], uvo['ra'] = lst, lst#, uvo['obsra'] = lst, lst, lst
     for blp in blps:
         i,j,uvo['pol'] = a.pol.blp2ijp(blp)
         preamble = (crds[blp], t, (i,j))
