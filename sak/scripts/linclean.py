@@ -60,8 +60,8 @@ def linCLEAN(vis, flag_idx, tau_max, A=None, A_all=None, return_As=False):
 ### there must be a better way than two different functions
 def mfunc_resid(uv,p,d,f):
     uvw,t,(i,j) = p
-    bl_len = np.sqrt(p[0][0]**2 + p[0][1]**2)*u.m
-    tau_max = ((b_len/c.c).to(u.ns) + float(opts.horizon)*u.ns).value
+    bl_len = np.sqrt(uvw[0]**2 + uvw[1]**2)*u.m
+    tau_max = ((bl_len/c.c).to(u.ns) + float(opts.horizon)*u.ns).value
     vis = d
     flag_idx = np.where(f)[0]
     resid,_ = linCLEAN(vis,flag_idx,tau_max)
@@ -69,8 +69,8 @@ def mfunc_resid(uv,p,d,f):
 
 def mfunc_model(uv,p,d,f):
     uvw,t,(i,j) = p
-    bl_len = np.sqrt(p[0][0]**2 + p[0][1]**2)*u.m
-    tau_max = ((b_len/c.c).to(u.ns) + float(opts.horizon)*u.ns).value
+    bl_len = np.sqrt(uvw[0]**2 + uvw[1]**2)*u.m
+    tau_max = ((bl_len/c.c).to(u.ns) + float(opts.horizon)*u.ns).value
     vis = d
     flag_idx = np.where(f)[0]
     _,model = linCLEAN(vis,flag_idx,tau_max)
