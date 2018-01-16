@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 """
 Wedge-filter by modelling visibilities with Fourier modes in delay space.
-*** Only to use on files containing a single separation type ***
 """
 import numpy as np
 import sys, os
