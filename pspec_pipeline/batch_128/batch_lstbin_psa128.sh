@@ -3,7 +3,7 @@
 #$ -cwd
 #$ -o grid_output
 #$ -j y
-#$ -l h_vmem=12G
+#$ -l h_vmem=18G
 #$ -N LSTBIN128
 source activate HERA
 LSTS=`python -c "import numpy as n; hr = 1.0; print ' '.join(['%f_%f' % (d,d+hr/4.) for d in n.arange(0,23.999*hr,hr/4.)])"`
@@ -12,7 +12,7 @@ LSTS=`python -c "import numpy as n; hr = 1.0; print ' '.join(['%f_%f' % (d,d+hr/
 #LSTS=9.250000_9.500000
 MY_LSTS=`pull_args.py $LSTS`
 CALFILE=psa6622_v002
-PREFIX=lstbin_Dec14_xx_fgsub
+PREFIX=lstbin_Dec14_yy_fg
 PATH2CAPO=/home/saulkohn/ReposForCanopy/capo
 echo $MY_LSTS
 echo mkdir ${PREFIX}
