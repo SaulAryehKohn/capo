@@ -28,8 +28,11 @@ parser.add_argument('--noisefiles', type=str, nargs='*',
                     help='supply 21cmSense files to plot sensitivity')
 parser.add_argument('--outfile', type=str, default='pspec_k3pk',
                     help='give custom output file name')
+parser.add_argument('--noC', action='store_true', help='do not plot C-weighted points')
+parser.add_argument('--noI', action='store_true', help='do not plot I-weighted points')
 args = parser.parse_args()
 
+assert args.noC != args.noI, 'gotta plot something.'
 
 zs = []
 for filename in args.files:
@@ -250,30 +253,56 @@ for filename in args.files:
     neg_ind_noise = np.where(pCn < 0)[0]
     neg_ind_fold = np.where(pCv_fold < 0)[0]
     neg_ind_noise_fold = np.where(pCn_fold < 0)[0]
-
-    ax1[gs_ind].plot(pspec_dict['k'],
-                     np.abs(pIv_fold) + pIv_fold_up, '--',
+    
+    pos_ind_Id = np.where(pIv >= 0)[0]
+    neg_ind_Id = np.where(pIv < 0)[0] 
+    pos_ind_fold_Id = np.where(pIv_fold >= 0)[0]
+    neg_ind_fold_Id = np.where(pIv_fold < 0)[0]
+    pos_ind_noise_fold_I = np.where(pIn_fold >=0)[0]
+    neg_ind_noise_fold_I = np.where(pIn_fold < 0)[0]
+    
+    if not args.noI: 
+        ax1[gs_ind].plot(pspec_dict['k'],
+                     np.abs(pIv_fold) + pIv_fold_up, 'c--',
                      label='pI {0:02d}%'.format(int(prob)))
-    #ax1[gs_ind].errorbar(pspec_dict['k'],
-    #                pIv_fold, pIv_fold_up,
-    #                label='pI {0:02d}%'.format(int(prob)),
-    #                linestyle='',marker=marker,color='blue')
-    ax1[gs_ind].errorbar(pspec_dict['k'][pos_ind_fold],
+        ax1[gs_ind].errorbar(pspec_dict['k'][pos_ind_fold_Id],
+                    pIv_fold[pos_ind_fold_Id],
+                    pIv_fold_up[pos_ind_fold_Id],
+                    label='pI {0:02d}%'.format(int(prob)),
+                    linestyle='',marker=marker,color='blue')
+        ax1[gs_ind].errorbar(pspec_dict['k'][neg_ind_fold_Id],
+                    -pIv_fold[neg_ind_fold_Id],
+                    pIv_fold_up[neg_ind_fold_Id],
+                    label='pI {0:02d}%'.format(int(prob)),
+                    linestyle='',marker=marker,color='blue',alpha=0.5)
+    if not args.noC:
+        ax1[gs_ind].errorbar(pspec_dict['k'][pos_ind_fold],
                          pCv_fold[pos_ind_fold],
                          pCv_fold_up[pos_ind_fold],
                          label='pC {0:02d}%'.format(int(prob)),
                          linestyle='', marker=marker, color='black')
-    ax1[gs_ind].errorbar(pspec_dict['k'][neg_ind_fold],
+        ax1[gs_ind].errorbar(pspec_dict['k'][neg_ind_fold],
                          -pCv_fold[neg_ind_fold],
                          pCv_fold_up[neg_ind_fold],
                          linestyle='',marker=marker, color='0.5')
-    ax2[gs_ind].plot(pspec_dict['kpl'],
-                     np.abs(pIv) + pIv_up, '--',
+    
+        ax2[gs_ind].plot(pspec_dict['kpl'],
+                     np.abs(pIv) + pIv_up, 'c--',
                      label='pI {0:02d}%'.format(int(prob)))
     #ax2[gs_ind].errorbar(pspec_dict['kpl'],
     #                pIv, pIv_up,
     #                label='pI {0:02d}%'.format(int(prob)),
     #                linestyle='',marker=marker,color='blue')
+    ax2[gs_ind].errorbar(pspec_dict['kpl'][pos_ind_Id],
+                         pIv[pos_ind_Id],
+                         pIv_up[pos_ind_Id],
+                         label='pC {0:02d}%'.format(int(prob)),
+                         linestyle='', marker=marker, color='b')
+    ax2[gs_ind].errorbar(pspec_dict['kpl'][neg_ind_Id],
+                         -pIv[neg_ind_Id],
+                         pIv_up[neg_ind_Id],
+                         linestyle='', marker=marker, color='b', alpha=0.5)
+    
     ax2[gs_ind].errorbar(pspec_dict['kpl'][pos_ind], 
                          pCv[pos_ind],
                          pCv_up[pos_ind],
@@ -283,19 +312,30 @@ for filename in args.files:
                          -pCv[neg_ind],
                          pCv_up[neg_ind],
                          linestyle='', marker=marker, color='0.5')
+    
     ax3[gs_ind].plot(pspec_dict['k'],
                      np.abs(pIn_fold) + pIn_fold_up, '--',
                      label='pIn {0:02d}%'.format(int(prob)))
+    if not args.noI:
+        ax3[gs_ind].errorbar(pspec_dict['k'][pos_ind_noise_fold_I],
+                             pIn_fold[pos_ind_noise_fold_I],
+                             pIn_fold_up[pos_ind_noise_fold_I],
+                             linestyle='',marker=marker,color='blue')
+        ax3[gs_ind].errorbar(pspec_dict['k'][neg_ind_noise_fold_I],
+                             pIn_fold[neg_ind_noise_fold_I],
+                             pIn_fold_up[neg_ind_noise_fold_I],
+                             linestyle='',marker=marker,color='blue',alpha=0.5)
     #ax3[gs_ind].errorbar(pspec_dict['k'],
     #                    pIn_fold, pIn_fold_up,
     #                    label='pIn {0:02d}%'.format(int(prob)),
     #                    linestyle='', marker=marker, color='blue')
-    ax3[gs_ind].errorbar(pspec_dict['k'][pos_ind_noise_fold],
+    if not args.noC:
+        ax3[gs_ind].errorbar(pspec_dict['k'][pos_ind_noise_fold],
                          pCn_fold[pos_ind_noise_fold],
                          pCn_fold_up[pos_ind_noise_fold],
                          label='pCn {0:02d}%'.format(int(prob)),
                          linestyle='', marker=marker, color='black')
-    ax3[gs_ind].errorbar(pspec_dict['k'][neg_ind_noise_fold],
+        ax3[gs_ind].errorbar(pspec_dict['k'][neg_ind_noise_fold],
                          -pCn_fold[neg_ind_noise_fold],
                          pCn_fold_up[neg_ind_noise_fold],
                          linestyle='', marker=marker, color='0.5')
@@ -462,12 +502,16 @@ if ymax_pk > ymax_d2:
     ymax_d2 = ymax_pk.copy()
     max_val_d2 = max_val_pk.copy()
 
-#ymax_d2 = 5e10 # XXX
-#max_val_d2 = np.log10(ymax_d2) # XXX
+ymax_d2 = 1e10 # XXX
+max_val_d2 = np.log10(ymax_d2) # XXX
+ymax_pk = 1e11
+ymin_pk = 1e6
+max_val_pk = 1e11
 
 ax1[0].set_ylim([1e-1, ymax_d2])
+ax1[0].set_ylim([1e-1,1e8])
 ax1[0].set_xlim([0.0, 0.6])
-ax2[0].set_ylim([1e-1, ymax_pk])
+ax2[0].set_ylim([ymin_pk, ymax_pk])
 ax2[0].set_xlim([-0.6, 0.6])
 ax3[0].set_ylim([1e-1, ymax_d2])
 ax3[0].set_xlim([0.0, 0.6])
@@ -482,7 +526,7 @@ ax6[0].set_xlim([-0.6, 0.6])
 # Some matplotlib versions will only give every other power of ten
 # The next few lines set the log yticks to be every power of ten
 ytick_d2= np.power(10., np.arange(-1,max_val_d2))
-ytick_pk= np.power(10., np.arange(-1,max_val_pk))
+ytick_pk= np.power(10., np.arange(np.log10(ymin_pk),np.log10(max_val_pk)))
 
 for axes in delta2_list:
     for ax in axes:

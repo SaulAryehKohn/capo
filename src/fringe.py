@@ -82,14 +82,17 @@ def aa_to_fr_profile(aa, (i,j), ch, pol='I', bins=DEFAULT_FRBINS, wgt=DEFAULT_WG
         fng = mk_fng(aa.get_baseline(i,j,'r')*fq*bl_scale, eq)
     _bmx = aa[0].bm_response((top), pol='x')[ch]; _bmx = n.where(top[2] > 0, _bmx, 0)
     _bmy = aa[0].bm_response((top), pol='y')[ch]; _bmy = n.where(top[2] > 0, _bmy, 0)
+    
     if   pol == 'xx': bm = _bmx * _bmx.conj()
     elif pol == 'yy': bm = _bmy * _bmy.conj()
     elif pol == 'xy': bm = _bmx * _bmy.conj()
     elif pol == 'yx': bm = _bmy * _bmx.conj()
-    elif pol ==  'I': bm = .5 * (_bmx*_bmx.conj() + _bmy*_bmy.conj())
+    elif pol in ['I','Q','U','V']: bm = .5 * (_bmx*_bmx.conj() + _bmy*_bmy.conj()) #XXX SK
+    """
     elif pol ==  'Q': bm = .5 * (_bmx*_bmx.conj() - _bmy*_bmy.conj())
     elif pol ==  'U': bm = .5 * (_bmx*_bmy.conj() + _bmy*_bmx.conj())
     elif pol ==  'V': bm = .5 * (_bmx*_bmy.conj() - _bmy*_bmx.conj()) #SK - is this the correct way to treat V?
+    """
     return fr_profile(bm, fng, bins=bins, wgt=wgt, iwgt=iwgt)
 
 # XXX write a function that generates bins from inttime and time window for fir

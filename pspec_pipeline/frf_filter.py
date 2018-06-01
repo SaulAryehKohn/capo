@@ -25,7 +25,8 @@ o.add_option('--alietal', action='store_true',
              help='Uses normalization for alietal frf,(default=False)')
 o.add_option('--outpath', action='store',
              help='Output path to write to.')
-
+o.add_option('--skip_lst_order',action='store_true',
+             help='Skip the LST reordering stage, if it is not needed')
 opts, args = o.parse_args(sys.argv[1:])
 
 uv = a.miriad.UV(args[0])
@@ -99,10 +100,14 @@ lsts = times['lsts']
 lst_order = n.argsort(lsts)  # data is not always read in LST order!
 lsts = n.array(lsts)[lst_order]
 times['times'] = times['times'][lst_order]
-for bl in data:  # orders data and flags correctly by LST
-    for pol in data[bl]:
-        data[bl][pol] = data[bl][pol][lst_order]
-        flags[bl][pol] = flags[bl][pol][lst_order]
+if not opts.skip_lst_order:
+    for bl in data:  # orders data and flags correctly by LST
+        print bl
+        for pol in data[bl]:
+            print pol
+            #import IPython;IPython.embed()
+            data[bl][pol] = data[bl][pol][lst_order]
+            flags[bl][pol] = flags[bl][pol][lst_order]
 _d = {}
 _w = {}
 bins = fringe.gen_frbins(inttime)

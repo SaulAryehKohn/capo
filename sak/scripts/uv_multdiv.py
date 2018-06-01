@@ -1,5 +1,5 @@
 """
-Add or subtract the data in the second UV file from the data in the 
+Multiply or divide the data in the second UV file from the data in the 
 first UV file.  They'll need to have corresponding integrations/data order.
 """
 

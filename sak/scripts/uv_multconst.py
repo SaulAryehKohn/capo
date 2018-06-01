@@ -8,7 +8,8 @@ o.add_option('--div', dest='div', action='store_true',
     help='Divide by the constant instead of multiplying.')
 opts,args = o.parse_args(sys.argv[1:])
 
-const = float(opts.const)
+#const = float(opts.const)
+const = complex(opts.const)
 
 def mfunc(uv, p, d, f):
     if opts.div: d = d/const
@@ -22,4 +23,4 @@ for file in args:
 	print file, '->', filename
 	uvo = a.miriad.UV(filename, status='new')
 	uvo.init_from_uv(uv)
-	uvo.pipe(uv, mfunc=mfunc, raw=True, append2hist='UVMULTCONST: --div=%s --const=%s file=%s\n' % (opts.div, opts.const, args.join(' ')))
+	uvo.pipe(uv, mfunc=mfunc, raw=True, append2hist='UVMULTCONST: --div=%s --const=%s file=%s\n' % (opts.div, opts.const, ' '.join(args)))

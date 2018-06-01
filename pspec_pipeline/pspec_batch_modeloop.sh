@@ -88,7 +88,7 @@ fi
 mkdir ${DIRNAME}
 echo Making Directory ${DIRNAME}
 
-for mode_num in `python -c "import numpy; print ' '.join(map(str,numpy.arange(0,100000,5000)))"` ; do
+for mode_num in `python -c "import numpy; print ' '.join(map(str,numpy.logspace(-3,0,50)))"` ; do
 #for mode_num in `python -c "import numpy; print ' '.join(map(str,numpy.arange(1,22,1)))"` ; do
 #for mode_num in `python -c "import numpy; print ' '.join(map(str,numpy.arange(0,22,1)))"` ; do
     #name_dir=project_${mode_num}_modes
